@@ -1,0 +1,51 @@
+# 무릉리 필지 현황 프로젝트 설정
+#
+# 프로젝트: 제주 서귀포시 대정읍 무릉리 토지조서
+# 소재지: 제주특별자치도 서귀포시 대정읍 무릉리
+# 필지 개수: 119개 (지번 기준)
+# 데이터 출처: c:/Users/ksj27/PROJECTS/autooffice/서귀포시 대정읍 무릉리 토지조서.csv
+
+project:
+  name: "muneung"
+  display_name: "무릉리 필지 현황"
+  location: "제주특별자치도 서귀포시 대정읍 무릉리"
+
+input:
+  source_shapefile: "data/원본_shapefile/서귀포시/LSMD_CONT_LDREG_50130_202510.shp"
+
+  # PNU 필터: 무릉리 정확한 위치 (총 면적 167,604㎡ / 50,700평)
+  pnu_filter: "5013010600"
+
+  parcel_lists:
+    # 모든 필지를 단일 카테고리로 분류
+    green: "input/muneung_list.txt"
+    blue: "input/empty.txt"   # 빈 파일
+    red: "input/empty.txt"    # 빈 파일
+
+output:
+  directory: "output"
+  formats:
+    - shapefile          # 카테고리화된 shapefile
+    - csv               # 면적 통계 CSV
+    - qml               # QGIS 스타일 파일
+    - webmap            # Leaflet 웹맵 HTML
+
+processing:
+  clean_jibun: true  # 지번에서 지목 접미사 제거 (전,답,대,임 등)
+
+style:
+  # 단일 카테고리 (카테고리 분류 없음)
+  categories:
+    ALL:
+      color: "#87CEEB"  # 하늘색
+      label: "무릉리 필지"
+
+# 좌표계 설정
+crs:
+  source: "EPSG:5186"    # 원본 좌표계 (Korea 2000 / Central Belt)
+  target: "EPSG:4326"    # 출력 좌표계 (WGS84, 웹맵용)
+
+# 인코딩 설정
+encoding:
+  dbf: "cp949"   # 한글 DBF 인코딩
+  csv: "utf-8"   # CSV 출력 인코딩

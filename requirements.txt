@@ -1,0 +1,20 @@
+et_xmlfile==2.0.0
+# Editable install with no version control (korea-cadastral-tools==1.0.0)
+-e /mnt/c/Users/ksj27/PROJECTS/korea-cadastral-tools
+numpy==2.3.4
+openpyxl==3.1.5
+pandas==2.3.3
+PyPDF2==3.0.1
+pyproj==3.7.1
+PyQt5-stubs==5.15.6.0
+python-dateutil==2.9.0.post0
+python-dotenv==1.2.1
+pytz==2025.2
+PyYAML==6.0.2
+qgis-plugin-manager==1.7.2
+qgis-stubs==0.2.0.post1
+semver==3.0.4
+setuptools==80.9.0
+six==1.17.0
+SuperGemini==4.0.9
+tzdata==2025.2

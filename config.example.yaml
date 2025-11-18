@@ -1,0 +1,73 @@
+# 지적도 자동화 프로젝트 설정 파일
+# 이 파일을 복사해서 실제 프로젝트 설정으로 사용하세요
+# 예: cp config.example.yaml projects/my_project/config.yaml
+
+project:
+  name: "example_project"           # 프로젝트 이름 (영문, 숫자, 언더스코어만)
+  display_name: "예시 프로젝트"      # 한글 표시 이름
+  location: "경기도 ○○시 ○○구"     # 위치 설명
+
+# 입력 파일 설정
+input:
+  # 원본 지적도 shapefile 경로 (전국 또는 시군구 단위)
+  source_shapefile: "data/원본_shapefile/용인시_처인구/LSMD_CONT_LDREG_41460.shp"
+
+  # 필지 목록 파일 (선택사항 - 카테고리 분류 시 필요)
+  parcel_lists:
+    green: "input/green_list.txt"   # 녹색 카테고리 필지 목록
+    blue: "input/blue_list.txt"     # 파란색 카테고리 필지 목록
+    red: "input/red_list.txt"       # 빨간색 카테고리 필지 목록
+
+  # 또는 단일 필지 목록 (카테고리 없이 전체 필지만)
+  # all_parcels: "input/parcel_list.txt"
+
+# 출력 설정
+output:
+  directory: "output"
+  formats:
+    - shapefile          # 카테고리화된 shapefile
+    - csv               # 면적 통계 CSV
+    - qml               # QGIS 스타일 파일
+    - webmap            # Leaflet 웹맵 HTML
+    - png               # 지도 이미지 (QGIS 필요)
+    - pdf               # 인쇄 레이아웃 (QGIS 필요)
+
+# 좌표계 설정
+crs:
+  source: "EPSG:5186"    # 원본 좌표계 (Korea 2000 / Central Belt)
+  output: "EPSG:4326"    # 출력 좌표계 (웹맵용 WGS84)
+
+# 스타일 설정
+style:
+  categories:
+    green:
+      color: "#90EE90"    # 연두색
+      label: "낮은 채무"
+      opacity: 0.6
+    blue:
+      color: "#87CEEB"    # 하늘색
+      label: "중간 채무"
+      opacity: 0.6
+    red:
+      color: "#FFB6C1"    # 연분홍
+      label: "높은 채무"
+      opacity: 0.6
+
+# 지도 레이아웃 설정 (QGIS 인쇄용)
+layout:
+  title: "○○ 지역 필지 현황"
+  page_size: "A4"           # A4, A3, Letter 등
+  orientation: "landscape"  # landscape 또는 portrait
+  include_legend: true
+  include_scale_bar: true
+  include_north_arrow: true
+  include_statistics_table: true
+
+# 처리 옵션
+processing:
+  # 지번 정리 (토지 용도 접미사 제거)
+  clean_jibun: true
+  # 면적 단위 변환 (㎡ → 평)
+  convert_to_pyeong: true
+  # 인코딩 처리
+  dbf_encoding: "cp949"

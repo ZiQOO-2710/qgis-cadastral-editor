@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>{{DISPLAY_NAME}} - 지적도 웹맵</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        body { margin: 0; padding: 0; font-family: 'Malgun Gothic', sans-serif; }
+        #map { width: 100%; height: 100vh; }
+        .info-box {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: white;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            z-index: 1000;
+            max-width: 300px;
+        }
+        .info-box h3 {
+            margin: 0 0 10px 0;
+            font-size: 16px;
+        }
+        .info-box .location {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        .legend {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #ddd;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+            font-size: 12px;
+        }
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            margin-right: 8px;
+            border: 1px solid #333;
+        }
+        .jibun-label {
+            background: transparent;
+            border: none;
+            color: white;
+            font-weight: bold;
+            font-size: 11px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.8), -1px -1px 2px rgba(0,0,0,0.8);
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="info-box">
+        <h3>{{DISPLAY_NAME}}</h3>
+        <div class="location">📍 {{LOCATION}}</div>
+        <div>📦 필지 수: <span id="parcel-count">-</span>개</div>
+        <div class="legend">
+            <div style="font-weight: bold; margin-bottom: 5px;">범례</div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #FFFF00;"></div>
+                <span>{{CATEGORY_LABEL}}</span>
+            </div>
+        </div>
+    </div>
+    <div id="map"></div>
+    <script>
+        var map = L.map('map');
+
+        // Satellite base layer
+        var satellite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            attribution: 'Tiles © Esri',
+            maxZoom: 19
+        }).addTo(map);
+
+        // Street map layer (optional)
+        var streets = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors',
+            maxZoom: 19
+        });
+
+        // Layer control
+        var baseMaps = {
+            "위성 지도": satellite,
+            "거리 지도": streets
+        };
+        L.control.layers(baseMaps).addTo(map);
+
+        // Load and display parcels
+        fetch('parcels.geojson')
+            .then(r => r.json())
+            .then(data => {
+                var parcelCount = data.features.length;
+                document.getElementById('parcel-count').innerText = parcelCount;
+
+                var parcelLayer = L.geoJSON(data, {
+                    style: function(feature) {
+                        return {
+                            fillColor: '#FFFF00',  // Yellow
+                            fillOpacity: 0.6,
+                            color: '#333',
+                            weight: 2
+                        };
+                    },
+                    onEachFeature: function(feature, layer) {
+                        var props = feature.properties;
+
+                        // Create popup
+                        var popupContent = '<div style="min-width:200px;">' +
+                            '<h4 style="margin:0 0 5px 0;">필지: ' + props.jibun + '</h4>' +
+                            '<div><b>PNU:</b> ' + props.pnu + '</div>' +
+                            '<div><b>면적:</b> ' + Number(props.area_sqm).toLocaleString('ko-KR', {maximumFractionDigits: 2}) + ' ㎡</div>' +
+                            '<div><b>면적:</b> ' + Number(props.area_pyeong).toLocaleString('ko-KR', {maximumFractionDigits: 2}) + ' 평</div>' +
+                            '</div>';
+                        layer.bindPopup(popupContent);
+
+                        // Add jibun label at centroid
+                        var center = layer.getBounds().getCenter();
+                        var jibunLabel = L.marker(center, {
+                            icon: L.divIcon({
+                                className: 'jibun-label',
+                                html: props.jibun,
+                                iconSize: null
+                            })
+                        }).addTo(map);
+                    }
+                }).addTo(map);
+
+                map.fitBounds(parcelLayer.getBounds());
+                console.log('필지 로드 완료:', parcelCount, '개');
+            })
+            .catch(err => console.error('GeoJSON 로드 실패:', err));
+    </script>
+</body>
+</html>

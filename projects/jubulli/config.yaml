@@ -1,0 +1,75 @@
+# 주북리 지적도 자동화 프로젝트 설정 파일
+# 사용법: python scripts/cadastral_auto.py --config projects/jubulli/config.yaml
+
+project:
+  name: "jubulli"
+  display_name: "주북리 필지 현황"
+  location: "경기도 용인시 처인구 양지면 주북리"
+
+# 입력 파일 설정
+input:
+  # 원본 지적도 shapefile 경로 (용인시 처인구)
+  source_shapefile: "data/원본_shapefile/용인시_처인구/LSMD_CONT_LDREG_41461_202510.shp"
+
+  # PNU 필터 (특정 행정구역만 추출, 옵션)
+  pnu_filter: "4146136029"  # 용인시 처인구 양지면 주북리
+
+  # 필지 목록 파일 (카테고리별)
+  parcel_lists:
+    green: "input/green_list.txt"   # 낮은 채무 부담 (6필지)
+    blue: "input/blue_list.txt"     # 중간 채무 부담 (12필지)
+    red: "input/red_list.txt"       # 높은 채무 부담 (2필지)
+
+  # 또는 단일 필지 목록 사용 (카테고리 없이 전체 필지만)
+  # all_parcels: "input/all_jibun.txt"
+
+# 출력 설정
+output:
+  directory: "output"
+  formats:
+    - shapefile          # 카테고리화된 shapefile (.shp, .shx, .dbf, .prj)
+    - csv               # 면적 통계 CSV
+    - qml               # QGIS 스타일 파일
+    - webmap            # Leaflet 웹맵 HTML
+    # - png             # 지도 이미지 (QGIS 필요)
+    # - pdf             # 인쇄 레이아웃 (QGIS 필요)
+
+# 좌표계 설정
+crs:
+  source: "EPSG:5186"    # 원본 좌표계 (Korea 2000 / Central Belt)
+  output: "EPSG:4326"    # 출력 좌표계 (웹맵용 WGS84)
+
+# 스타일 설정
+style:
+  categories:
+    green:
+      color: "#90EE90"    # 연두색
+      label: "낮은 채무 부담"
+      opacity: 0.6
+    blue:
+      color: "#87CEEB"    # 하늘색
+      label: "중간 채무 부담"
+      opacity: 0.6
+    red:
+      color: "#FFB6C1"    # 연분홍
+      label: "높은 채무 부담"
+      opacity: 0.6
+
+# 지도 레이아웃 설정 (QGIS 인쇄용)
+layout:
+  title: "주북리 필지 현황"
+  page_size: "A4"           # A4, A3, Letter 등
+  orientation: "landscape"  # landscape 또는 portrait
+  include_legend: true
+  include_scale_bar: true
+  include_north_arrow: true
+  include_statistics_table: true
+
+# 처리 옵션
+processing:
+  # 지번 정리 (토지 용도 접미사 제거: 전, 답, 대 등)
+  clean_jibun: true
+  # 면적 단위 변환 (㎡ → 평)
+  convert_to_pyeong: true
+  # DBF 인코딩
+  dbf_encoding: "cp949"

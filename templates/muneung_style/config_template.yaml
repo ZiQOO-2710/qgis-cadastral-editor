@@ -1,0 +1,41 @@
+# 무릉리 스타일 지적도 자동화 템플릿
+# 사용법: 프로젝트 이름과 경로만 수정하세요
+
+project:
+  name: "프로젝트명"  # 예: muneung, haengwonri
+  display_name: "표시 이름"  # 예: 무릉리 필지 현황
+  location: "위치"  # 예: 제주특별자치도 서귀포시 대정읍 무릉리
+
+input:
+  source_shapefile: "data/원본_shapefile/시군구/파일명.shp"
+  pnu_filter: "PNU코드"  # 예: "5013010600" (읍면동리 단위)
+
+  parcel_lists:
+    green: "input/프로젝트명_list.txt"
+    blue: "input/empty.txt"
+    red: "input/empty.txt"
+
+output:
+  directory: "output"
+  formats:
+    - shapefile
+    - csv
+    - qml
+    - webmap
+
+processing:
+  clean_jibun: true
+
+style:
+  categories:
+    ALL:
+      color: "#FFFF00"  # 노란색 (무릉리 스타일)
+      label: "필지"
+
+crs:
+  source: "EPSG:5186"
+  target: "EPSG:4326"
+
+encoding:
+  dbf: "cp949"
+  csv: "utf-8"
