@@ -48,6 +48,15 @@ exec(open('/path/to/script.py', encoding='utf-8').read())
 
 **설정 파일**: `.claude/agents.md`, `.claude/auto-agent.md`, `.claude/pipeline.md`
 
+### 멀티 AI 협업
+
+코드 검증 요청 시 자동으로 협업:
+1. **Claude Code** - 코드 작성
+2. **Codex (GPT)** - 품질/버그/보안 검증
+3. **Claude Code** - 피드백 반영하여 수정
+
+예시: "새 기능 만들고 Codex로 검증해줘"
+
 ### MCP 서버
 
 ```bash
