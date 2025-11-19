@@ -87,6 +87,12 @@ pip install -r requirements.txt
 cd ../korea-cadastral-tools && pip install -e . && cd -
 ```
 
+### 전국 지적도 데이터
+
+**위치**: `E:\연속지적도 전국`
+
+전국 모든 시/군/구의 연속지적도 shapefile이 저장되어 있음. 지번만 알면 해당 지역 shapefile을 찾아서 지적도 생성 가능.
+
 ### 프로젝트 구조
 
 ```
@@ -101,6 +107,9 @@ qgis-cadastral-editor/
 │   ├── haengwonri/        # 행원리 프로젝트
 │   └── jubulli/           # 주북리 프로젝트
 └── templates/             # 재사용 템플릿
+
+E:\연속지적도 전국/           # 전국 지적도 데이터
+└── [시도]/[시군구]/         # 지역별 shapefile
 ```
 
 ### 경로 관리
